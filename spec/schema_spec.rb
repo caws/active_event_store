@@ -7,7 +7,7 @@ describe ActiveEventStore::Schema do
 
   describe ".attribute" do
     specify "should add attributes with their default values to the class" do
-      schema_class.attribute(:hello, 'world')
+      schema_class.attribute(:hello, default_value: 'world')
 
       expect(schema_class.attributes).to match_array([:hello])
       expect(schema_class.schema_attributes)
@@ -22,10 +22,10 @@ describe ActiveEventStore::Schema do
     end
 
     specify "should raise DuplicatedAttributeError if the same attribute is defined more than once" do
-      schema_class.attribute(:hello, 'world')
+      schema_class.attribute(:hello, default_value: 'world')
 
       expect do
-        schema_class.attribute(:hello, 'world')
+        schema_class.attribute(:hello, default_value: 'world')
       end.to raise_error(ActiveEventStore::Schema::DuplicatedAttributeError)
     end
   end
@@ -33,7 +33,7 @@ describe ActiveEventStore::Schema do
   describe "#call" do
     specify "should collaborate with schema_params as expected" do
       schema_params_double = double
-      schema_class.attribute(:hello, 'world')
+      schema_class.attribute(:hello, default_value: 'world')
 
       expect(schema_params_double)
         .to receive(:for)

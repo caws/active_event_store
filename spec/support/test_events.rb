@@ -13,9 +13,9 @@ module ActiveEventStore
   end
 
   class TestEventSchema < ActiveEventStore::Schema
-    attribute :user_id, 'some_default_value_for_user_id'
-    attribute :action_type, 'some_default_value_for_action_type'
-    attribute :some_boolean, true
+    attribute :user_id, default_value: 'some_default_value_for_user_id'
+    attribute :action_type, default_value: 'some_default_value_for_action_type'
+    attribute :some_boolean, default_value: true
   end
 
   class TestEventWithSchema  < ActiveEventStore::Event

@@ -5,7 +5,7 @@ module ActiveEventStore
     class << self
       attr_reader :schema_attributes
 
-      def attribute(attribute, default_value, schema_attribute: SchemaAttribute)
+      def attribute(attribute, default_value:, schema_attribute: SchemaAttribute)
         @schema_attributes ||= []
 
         new_attribute = schema_attribute.for(
