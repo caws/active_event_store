@@ -31,5 +31,19 @@ describe ActiveEventStore::SchemaParams do
                                  }
                                )
     end
+
+    specify "should raise error if attribute is required but not present" do
+      expect do
+        ActiveEventStore::SchemaParams.for(
+          schema_attributes: [
+            ActiveEventStore::SchemaAttribute.for(
+              attribute: :some_attribute_name,
+              required: true
+            )
+          ],
+          attributes: {}
+        )
+      end.to raise_error(ActiveEventStore::SchemaParams::RequiredAttributeNotPresentError, "#{:some_attribute_name} is required but not present")
+    end
   end
 end
