@@ -5,12 +5,13 @@ module ActiveEventStore
     class << self
       attr_reader :schema_attributes
 
-      def attribute(attribute, default_value, schema_attribute: SchemaAttribute)
+      def attribute(attribute, default_value, required: false, schema_attribute: SchemaAttribute)
         @schema_attributes ||= []
 
         new_attribute = schema_attribute.for(
           attribute: attribute,
-          default_value: default_value
+          default_value: default_value,
+          required: required
         )
 
         if @schema_attributes.include?(new_attribute)

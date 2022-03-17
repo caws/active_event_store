@@ -7,7 +7,7 @@ describe ActiveEventStore::Schema do
 
   describe ".attribute" do
     specify "should add attributes with their default values to the class" do
-      schema_class.attribute(:hello, 'world')
+      schema_class.attribute(:hello, 'world', required: true)
 
       expect(schema_class.attributes).to match_array([:hello])
       expect(schema_class.schema_attributes)
@@ -15,7 +15,8 @@ describe ActiveEventStore::Schema do
               [
                 ActiveEventStore::SchemaAttribute.for(
                   attribute: :hello,
-                  default_value: 'world'
+                  default_value: 'world',
+                  required: true
                 )
               ]
             )
