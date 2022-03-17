@@ -9,6 +9,10 @@ require "active_event_store/event"
 require "active_event_store/mapping"
 require "active_event_store/mapper"
 
+require "active_event_store/schema_params"
+require "active_event_store/schema_attribute"
+require "active_event_store/schema"
+
 require "active_event_store/rspec" if defined?(RSpec::Core)
 
 module ActiveEventStore

@@ -7,6 +7,7 @@ module ActiveEventStore
 
     class << self
       attr_writer :identifier
+      attr_reader :schema
 
       def identifier
         return @identifier if instance_variable_defined?(:@identifier)
@@ -27,6 +28,11 @@ module ActiveEventStore
             end
           CODE
         end
+      end
+
+      def with_schema(schema)
+        @schema = schema
+        attributes(*schema.attributes)
       end
 
       def sync_attributes(*fields)
@@ -63,6 +69,7 @@ module ActiveEventStore
     end
 
     def initialize(metadata: {}, event_id: nil, **params)
+      params = schema.call(params) if schema
       validate_attributes!(params)
       extract_sync_attributes!(params)
       super(**{event_id: event_id, metadata: metadata, data: params}.compact)
@@ -105,6 +112,10 @@ module ActiveEventStore
 
         instance_variable_set(:"@#{key}", params.delete(key))
       end
+    end
+
+    def schema
+      self.class.schema
     end
   end
 end

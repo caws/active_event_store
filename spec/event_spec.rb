@@ -62,6 +62,99 @@ describe ActiveEventStore::Event do
     end
   end
 
+  context "with schema" do
+    let(:event_with_schema_class) { ActiveEventStore::TestEventWithSchema }
+    let(:event) { event_with_schema_class.new }
+
+    specify "with metadata" do
+      event = event_with_schema_class.new(user_id: 1, metadata: {timestamp: 321})
+
+      expect(event.user_id).to eq 1
+      expect(event.action_type).to eq "some_default_value_for_action_type"
+      expect(event.some_boolean).to eq true
+      expect(event.message_id).not_to be_nil
+      expect(event.metadata).to be_a(RubyEventStore::Metadata)
+      expect(event.metadata[:timestamp]).to eq 321
+    end
+
+    describe "#to_h" do
+      specify do
+        expect(event.to_h).to eq(
+                                event_id: event.message_id,
+                                data: {
+                                  user_id: "some_default_value_for_user_id",
+                                  action_type: "some_default_value_for_action_type",
+                                  some_boolean: true
+                                },
+                                metadata: {},
+                                type: "test_event_with_schema"
+                              )
+      end
+
+      context "when dealing with boolean attributes" do
+        specify "boolean values should retain their value if present as false" do
+          event = event_with_schema_class.new(some_boolean: false)
+
+          expect(event.to_h).to eq(
+                                  event_id: event.message_id,
+                                  data: {
+                                    user_id: "some_default_value_for_user_id",
+                                    action_type: "some_default_value_for_action_type",
+                                    some_boolean: false
+                                  },
+                                  metadata: {},
+                                  type: "test_event_with_schema"
+                                )
+        end
+
+        specify "boolean values should retain their value if present as nil" do
+          event = event_with_schema_class.new(some_boolean: nil)
+
+          expect(event.to_h).to eq(
+                                  event_id: event.message_id,
+                                  data: {
+                                    user_id: "some_default_value_for_user_id",
+                                    action_type: "some_default_value_for_action_type",
+                                    some_boolean: nil
+                                  },
+                                  metadata: {},
+                                  type: "test_event_with_schema"
+                                )
+        end
+
+        specify "boolean values should take their default value if not present" do
+          event = event_with_schema_class.new
+
+          expect(event.to_h).to eq(
+                                  event_id: event.message_id,
+                                  data: {
+                                    user_id: "some_default_value_for_user_id",
+                                    action_type: "some_default_value_for_action_type",
+                                    some_boolean: true
+                                  },
+                                  metadata: {},
+                                  type: "test_event_with_schema"
+                                )
+        end
+      end
+
+      specify "with sync attributes" do
+        event_class.new(user: {name: "John"})
+
+        expect(event.to_h).to eq(
+                                event_id: event.message_id,
+                                data: {
+                                  user_id: "some_default_value_for_user_id",
+                                  action_type: "some_default_value_for_action_type",
+                                  some_boolean: true
+                                },
+                                metadata: {},
+                                type: "test_event_with_schema"
+                              )
+      end
+    end
+  end
+
   specify "sets event_id if event_id is provided" do
     event = event_class.new(event_id: "123", user_id: 22)
     expect(event.to_h).to eq(
